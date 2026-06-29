@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Программа тренировок</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #F8F9FA; font-family: 'Segoe UI', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const BASE = "https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/videos/";
+
+const days = [
+  {
+    day: "Понедельник", muscles: "Грудь + Трицепс", color: "#E8F4FD", accent: "#2196F3",
+    exercises: [
+      { name: "Жим штанги лёжа", target: "Грудь (основа)", sets: "4 × 8–10 повт.", weight: "40 кг (разминка: пустой гриф ×15, затем 30 кг ×8)", how: "Ложишься на горизонтальную скамью, хват чуть шире плеч. Опускаешь штангу до касания груди, жмёшь вверх. Спина и ноги не отрываются. Выдох на подъёме.", gif: "0025-EIeI8Vf.gif" },
+      { name: "Жим гантелей на наклонной скамье", target: "Верхняя часть груди", sets: "3 × 10–12 повт.", weight: "8–10 кг каждая", how: "Скамья под углом 30–45°. Гантели жмёшь вверх, руки слегка сходятся в верхней точке. Медленно опускаешь.", gif: "0314-ns0SIbU.gif" },
+      { name: "Разводка гантелей лёжа", target: "Грудь (форма и растяжка)", sets: "3 × 12 повт.", weight: "6–8 кг каждая", how: "Лёжа горизонтально, гантели над грудью ладонями друг к другу. Разводишь руки в стороны по дуге — как обнимаешь большой шар. Локти чуть согнуты. Сводишь обратно.", gif: "0308-yz9nUhF.gif" },
+      { name: "Жим узким хватом", target: "Трицепс (основа)", sets: "3 × 10 повт.", weight: "30 кг", how: "Та же скамья что и жим лёжа, хват на ширине плеч. Локти идут вдоль тела, не в стороны. Опускаешь до груди, жмёшь вверх.", gif: "0030-J6Dx1Mu.gif" },
+      { name: "Разгибание на блоке стоя", target: "Трицепс (изоляция)", sets: "3 × 12–15 повт.", weight: "10–15 кг на стеке", how: "Блочный тренажёр, рукоять сверху. Локти прижаты к бокам и не двигаются. Только предплечья идут вниз до полного выпрямления, медленно возвращаешь.", gif: "0201-3ZflifB.gif" },
+    ]
+  },
+  {
+    day: "Среда", muscles: "Спина + Бицепс", color: "#F0FDF4", accent: "#22C55E",
+    exercises: [
+      { name: "Тяга горизонтального блока сидя", target: "Середина и толщина спины", sets: "4 × 8–10 повт.", weight: "25–30 кг на стеке", how: "Сидишь, ноги упираются в платформу, спина прямая. Тело неподвижно — не раскачиваешься. Тянешь рукоять к животу, локти идут назад. В конце лопатки сводятся вместе. Медленно возвращаешь.", gif: "0861-fUBheHs.gif" },
+      { name: "Тяга штанги в наклоне", target: "Спина (толщина)", sets: "4 × 8–10 повт.", weight: "30–35 кг (разминка: пустой гриф ×15)", how: "Наклон корпуса 45°, спина прямая, смотришь вперёд. Тянешь штангу к животу, локти идут назад вдоль тела. Выдох на подъёме.", gif: "0027-eZyBC3j.gif" },
+      { name: "Тяга верхнего блока к груди", target: "Широчайшие (ширина спины)", sets: "3 × 10–12 повт.", weight: "20–25 кг на стеке", how: "Сидишь в тренажёре, колени под валиком. Широкая рукоять сверху. Тянешь к верхней части груди, локти идут вниз и назад. Не тяни за голову.", gif: "2330-LEprlgG.gif" },
+      { name: "Сгибание рук со штангой стоя", target: "Бицепс (основа)", sets: "3 × 10 повт.", weight: "20–25 кг", how: "Стоишь прямо, штанга в руках хватом снизу. Локти прижаты к бокам и не двигаются. Поднимаешь до уровня плеч, медленно опускаешь. Не раскачивайся.", gif: "0031-25GPyDY.gif" },
+      { name: "Скамья Скотта с гантелями", target: "Бицепс (изоляция)", sets: "3 × 12 повт.", weight: "6–8 кг каждая", how: "Наклонная подставка в зале — кладёшь руки на неё, локти зафиксированы. Берёшь гантели двумя руками одновременно и сгибаешь. Руки не отрываются от подставки.", gif: "0372-jivWf8n.gif" },
+    ]
+  },
+  {
+    day: "Пятница", muscles: "Ноги", color: "#FFF7ED", accent: "#F97316",
+    exercises: [
+      { name: "Приседания со штангой", target: "Квадрицепсы, ягодицы (основа)", sets: "4 × 8–10 повт.", weight: "40–50 кг (разминка: пустой гриф ×15)", how: "Подходишь к стойке лицом, подлезаешь под штангу — она ложится на трапеции (не на шею). Шаг назад, ноги на ширине плеч. Спина прямая, смотришь вперёд. Приседаешь до параллели бёдер с полом, колени идут в направлении носков. Выдох на подъёме.", gif: "0046-5VCj6iH.gif" },
+      { name: "Румынская тяга со штангой", target: "Ягодицы, задняя поверхность бедра", sets: "3 × 10–12 повт.", weight: "30–40 кг", how: "Штанга в руках, ноги чуть согнуты в коленях. Наклоняешься вперёд отводя таз назад — спина прямая, штанга скользит вдоль ног вниз. Чувствуешь растяжение сзади бедра — возвращаешься.", gif: "0085-wQ2c4XD.gif" },
+      { name: "Жим ногами в тренажёре", target: "Квадрицепсы", sets: "3 × 12 повт.", weight: "40–60 кг на платформе", how: "Садишься в тренажёр, ноги на платформе на ширине плеч. Опускаешь платформу до угла 90° в колене, жмёшь обратно. Колени не выпрямляй полностью. Выдох на жиме.", gif: "2287-V07qpXy.gif" },
+      { name: "Разгибание ног в тренажёре", target: "Квадрицепс (изоляция)", sets: "3 × 12–15 повт.", weight: "15–20 кг на стеке", how: "Сидишь в тренажёре, голени под валиком. Разгибаешь ноги вверх до полного выпрямления, секунду держишь, медленно опускаешь.", gif: "0585-my33uHU.gif" },
+      { name: "Сгибание ног в тренажёре", target: "Бицепс бедра (изоляция)", sets: "3 × 12–15 повт.", weight: "15–20 кг на стеке", how: "Лёжа в тренажёре лицом вниз, валик на задней поверхности голени. Сгибаешь ноги к ягодицам, медленно опускаешь обратно.", gif: "0586-17lJ1kr.gif" },
+    ]
+  },
+  {
+    day: "Воскресенье", muscles: "Плечи + Пресс", color: "#FDF4FF", accent: "#A855F7",
+    exercises: [
+      { name: "Жим гантелей сидя над головой", target: "Плечи (основа, все пучки)", sets: "4 × 8–10 повт.", weight: "8–10 кг каждая (разминка: лёгкие ×15)", how: "Садишься на скамью со спинкой, гантели на уровне плеч ладонями вперёд. Жмёшь вверх до выпрямления рук, медленно опускаешь. Спина прижата к спинке. Выдох на подъёме.", gif: "0091-kTbSH9h.gif" },
+      { name: "Разведение гантелей в стороны", target: "Средняя дельта (ширина плеч)", sets: "3 × 12–15 повт.", weight: "5–6 кг каждая", how: "Стоишь прямо, гантели по бокам. Поднимаешь руки в стороны до уровня плеч — не выше. Локти чуть согнуты. Медленно опускаешь. Не раскачивайся.", gif: "0311-AQ0mC4Y.gif" },
+      { name: "Подъём штанги перед собой", target: "Передняя дельта", sets: "3 × 12 повт.", weight: "15–20 кг", how: "Стоишь, штанга в руках хватом сверху. Поднимаешь прямыми руками вперёд до уровня плеч. Медленно опускаешь. Не используй инерцию тела.", gif: "0041-b2Uoz54.gif" },
+      { name: "Обратные разведения на блоке", target: "Задняя дельта", sets: "3 × 12–15 повт.", weight: "5–10 кг на стеке", how: "Кроссовер — два троса по бокам. Берёшь левый трос правой рукой и правый — левой (скрещены). Наклоняешься чуть вперёд, разводишь руки в стороны назад как крылья. Медленно возвращаешь. Если нет кроссовера — разведение гантелей в наклоне 45°.", gif: "0154-aqvSOQE.gif" },
+      { name: "Подъём ног в висе", target: "Пресс (нижняя часть)", sets: "3 × 10–15 повт.", weight: "Без веса", how: "Висишь на турнике. Поднимаешь ноги до уровня пояса — прямые или согнутые в коленях если тяжело. Медленно опускаешь. Не раскачивайся.", gif: "0472-I3tsCnC.gif" },
+    ]
+  },
+];
+
+function App() {
+  const [activeDay, setActiveDay] = React.useState(0);
+  const [expandedEx, setExpandedEx] = React.useState(null);
+  const [gifError, setGifError] = React.useState({});
+  const day = days[activeDay];
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#F8F9FA", minHeight: "100vh", padding: "16px", maxWidth: "600px", margin: "0 auto" }}>
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#1A1A1A" }}>💪 Программа тренировок</h1>
+        <p style={{ color: "#666", fontSize: "13px", marginTop: "4px" }}>Пн / Ср / Пт / Вс · 53 кг · Набор массы</p>
+      </div>
+
+      <div style={{ display: "flex", gap: "8px", marginBottom: "16px", overflowX: "auto", paddingBottom: "4px" }}>
+        {days.map((d, i) => (
+          <button key={i} onClick={() => { setActiveDay(i); setExpandedEx(null); }} style={{
+            flex: "0 0 auto", padding: "8px 14px", borderRadius: "20px", border: "none",
+            background: activeDay === i ? d.accent : "#E5E7EB",
+            color: activeDay === i ? "#fff" : "#555",
+            fontWeight: activeDay === i ? "700" : "400",
+            fontSize: "13px", cursor: "pointer", whiteSpace: "nowrap",
+          }}>{d.day}</button>
+        ))}
+      </div>
+
+      <div style={{ background: day.color, borderRadius: "16px", padding: "16px", marginBottom: "12px", borderLeft: `4px solid ${day.accent}` }}>
+        <div style={{ fontSize: "11px", color: day.accent, fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px" }}>{day.day}</div>
+        <div style={{ fontSize: "20px", fontWeight: "700", color: "#1A1A1A", marginTop: "2px" }}>{day.muscles}</div>
+        <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>{day.exercises.length} упражнений · ~50 минут · без кардио</div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        {day.exercises.map((ex, i) => {
+          const isOpen = expandedEx === i;
+          return (
+            <div key={i} style={{
+              background: "#fff", borderRadius: "14px", overflow: "hidden",
+              boxShadow: isOpen ? "0 4px 20px rgba(0,0,0,0.10)" : "0 1px 4px rgba(0,0,0,0.06)",
+              border: isOpen ? `1.5px solid ${day.accent}` : "1.5px solid transparent",
+            }}>
+              <div onClick={() => setExpandedEx(isOpen ? null : i)} style={{ padding: "14px 16px", cursor: "pointer", display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: day.accent, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700", fontSize: "14px", flexShrink: 0 }}>{i + 1}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: "600", fontSize: "15px", color: "#1A1A1A" }}>{ex.name}</div>
+                  <div style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>{ex.target}</div>
+                </div>
+                <div style={{ fontSize: "18px", color: day.accent, transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>⌄</div>
+              </div>
+
+              {isOpen && (
+                <div style={{ padding: "0 16px 16px", borderTop: `1px solid ${day.color}` }}>
+                  {!gifError[`${activeDay}-${i}`] && (
+                    <div style={{ marginTop: "12px", borderRadius: "10px", overflow: "hidden", background: "#f5f5f5", textAlign: "center" }}>
+                      <img src={`${BASE}${ex.gif}`} alt={ex.name} style={{ width: "100%", maxHeight: "200px", objectFit: "contain" }}
+                        onError={() => setGifError(prev => ({ ...prev, [`${activeDay}-${i}`]: true }))} />
+                    </div>
+                  )}
+                  <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                    <div style={{ flex: 1, background: day.color, borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+                      <div style={{ fontSize: "11px", color: "#888" }}>Подходы × Повторы</div>
+                      <div style={{ fontSize: "13px", fontWeight: "700", color: day.accent, marginTop: "2px" }}>{ex.sets}</div>
+                    </div>
+                    <div style={{ flex: 1, background: day.color, borderRadius: "10px", padding: "10px", textAlign: "center" }}>
+                      <div style={{ fontSize: "11px", color: "#888" }}>Вес</div>
+                      <div style={{ fontSize: "13px", fontWeight: "700", color: day.accent, marginTop: "2px" }}>{ex.weight}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: "12px", background: "#F8F9FA", borderRadius: "10px", padding: "12px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: "#888", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Как делать</div>
+                    <div style={{ fontSize: "14px", color: "#333", lineHeight: "1.6" }}>{ex.how}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ marginTop: "20px", padding: "14px", background: "#fff", borderRadius: "14px", textAlign: "center" }}>
+        <div style={{ fontSize: "12px", color: "#888" }}>⏱ Отдых между подходами</div>
+        <div style={{ fontSize: "13px", color: "#333", marginTop: "4px" }}>Базовые — <strong>2–3 мин</strong> · Изоляция — <strong>1–1.5 мин</strong></div>
+        <div style={{ fontSize: "12px", color: "#888", marginTop: "8px" }}>💨 Выдох всегда на усилии</div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(React.createElement(App), document.getElementById('root'));
+</script>
+</body>
+</html>
